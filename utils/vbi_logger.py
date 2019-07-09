@@ -15,7 +15,7 @@ class VBILogger(object):
         self.log_file_name = log_file_name
         self.backup_count = 5  # 最多存放日志的数量
         # 日志输出级别
-        self.console_output_level = 'WARNING'
+        self.console_output_level = 'INFO'
         self.file_output_level = 'DEBUG'
         # 日志输出格式
         self.formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s | %(message)s')
