@@ -5,7 +5,7 @@ from utils.config import DINGTALK_WEBHOOK, BROWSERS
 projectName = os.getenv("JOB_NAME")
 sonarqubeAddress = os.getenv("SonarqubeAddress")
 # Dingtalk_access_token = DINGTALK_WEBHOOK
-Dingtalk_access_token = 'https://oapi.dingtalk.com/robot/send?access_token=1ffe5cabce5dbb4c56b227566028b55d2068086e156927a78def5c66e25ec451'
+Dingtalk_access_token = 'https://oapi.dingtalk.com/robot/send?access_token='
 JenkinsAddress = os.getenv("JenkinsAddress")
 JenkinsUserName = os.getenv("JenkinsUserName")
 JenkinsPassWord = os.getenv("JenkinsPassWord")
