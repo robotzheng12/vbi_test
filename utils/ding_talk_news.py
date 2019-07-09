@@ -4,8 +4,7 @@ from utils.config import DINGTALK_WEBHOOK, BROWSERS
 
 projectName = os.getenv("JOB_NAME")
 sonarqubeAddress = os.getenv("SonarqubeAddress")
-# Dingtalk_access_token = DINGTALK_WEBHOOK
-Dingtalk_access_token = 'https://oapi.dingtalk.com/robot/send?access_token='
+Dingtalk_access_token = DINGTALK_WEBHOOK
 JenkinsAddress = os.getenv("JenkinsAddress")
 JenkinsUserName = os.getenv("JenkinsUserName")
 JenkinsPassWord = os.getenv("JenkinsPassWord")
@@ -17,7 +16,7 @@ def Log(mes):
     return
 
 
-def sendding(content, title, messageUrl):
+def sendding(content, title):
     url = Dingtalk_access_token
     pagrem = {
         "msgtype": "markdown",
@@ -129,7 +128,7 @@ def notification(result):
                                " \n - 错误数量:<font color=#bb1111>" + str(error_count) + "</font>个 \n")
     code_reslut.append(" - [查看详情](" + messageUrl + ")")
     code_reslut = ''.join(code_reslut)
-    sendding(content=code_reslut, title='WEBUI测试', messageUrl=messageUrl)
+    sendding(content=code_reslut, title='WEBUI测试')
     return
 
 

@@ -10,7 +10,9 @@ from test.first import UserLogin
 from utils.report_help import TestResult, HTMLReport
 from utils.config import BROWSERS
 from utils.vbi_logger import VBILogger
+from utils.ding_talk_news import notification
 from selenium.common.exceptions import TimeoutException
+
 
 log_dir = r'E:\workspace\python_project\vbitest\logs'
 startTime = datetime.datetime.now()
@@ -76,4 +78,4 @@ with open(report_bak, 'a') as f:
     htmlReport.generateReport()
 
 # 推送钉钉
-# notification(result)
+notification(result)
