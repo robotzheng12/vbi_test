@@ -180,6 +180,8 @@ def dismantle_image_arithmetic(imagesize):
                         return (320, 180)
                     else:
                         return (180, 320)
+                else:
+                    i += 1
         else:
             i += 1
 

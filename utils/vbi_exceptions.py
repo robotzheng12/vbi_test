@@ -28,14 +28,18 @@ class ImageLoadError(Exception):
     """
     图像加载失败
     """
-    pass
+
+    def __init__(self, message):
+        self.message = message
 
 
 class ImageNotExist(Exception):
     """
     图像不存在
     """
-    pass
+
+    def __init__(self, message):
+        self.message = message
 
 
 class ImageLoadTimeout(Exception):

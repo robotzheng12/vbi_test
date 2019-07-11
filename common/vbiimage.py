@@ -6,11 +6,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.keys import Keys
 from pykeyboard import PyKeyboard
 from common.commonaw import compare_image
 from utils.config import BASE_PATH
 from utils.vbi_logger import VBILogger
+from utils.vbi_exceptions import ImageLoadError, ImageNotExist
 
 
 class VBIImage(object):
@@ -37,17 +37,14 @@ class VBIImage(object):
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'el-input__inner')))
         input = self.driver.find_element_by_css_selector(".screenHead input.el-input__inner")
         input.clear()
-        time.sleep(3)
         if self.image_name:
             input.send_keys(self.image_name)
-        if self.driver.name == 'internet explorer':
-            input.send_keys(Keys.ENTER)
-            self.driver.refresh()
-            self.wait.until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, '.el-col.el-col-6:first-child .glyphicon.glyphicon-eye-open'))).click()
-        else:
-            self.driver.find_element_by_css_selector('.el-input-group__append button').click()
-            self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'el-card__body'))).click()
+        self.driver.find_element_by_css_selector('.el-input-group__append button').click()
+        if '连接成功' in self.driver.find_element_by_class_name(
+                'headerItem').text and '该目录暂无画面' in self.driver.find_element_by_class_name('screenBody').text:
+            raise ImageNotExist('{imageName}画面不存在'.format(imageName=self.image_name))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'el-card__body'))).click()
+        time.sleep(1)
         target_image = self._get_target_image()
         self.driver.back()
         self.logger.info(self.image_name)
@@ -61,6 +58,8 @@ class VBIImage(object):
         """
         k = PyKeyboard()
         k.tap_key(k.function_keys[11])
+        # 解决IE浏览器全屏出现滚动条页面显示不全问题
+        self.driver.refresh()
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'inner')))
         time.sleep(3)
         self.target_image = self.get_image(self.driver)
@@ -96,6 +95,8 @@ class VBIImage(object):
             raise Exception
         path = TEMP_DIR + template_image_name + '.png'
         template_image = cv2.imread(path)
+        if template_image is None:
+            raise ImageLoadError('不存在模板图片')
         return template_image
 
     def get_position(self, browser):
