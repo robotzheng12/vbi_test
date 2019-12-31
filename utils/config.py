@@ -20,5 +20,16 @@ USER = cfg.get("Test", "USER")
 PASSWORD = cfg.get("Test", "PASSWORD")
 INTERNET_RETRY = int(cfg.get('Retry', 'INTERNET_RETRY'))
 
+# DB
+DB_HOST = cfg.get('DB_INFO', 'DB_HOST')
+DB_PORT = int(cfg.get('DB_INFO', 'DB_PORT'))
+DB_NAME = cfg.get('DB_INFO', 'DB_NAME')
+DB_USERNAME = cfg.get('DB_INFO', 'DB_USERNAME')
+DB_PASSWORD = cfg.get('DB_INFO', 'DB_PASSWORD')
+DB_CHARSET = cfg.get('DB_INFO', 'DB_CHARSET')
+
+DB_DICT = {'DB_HOST': DB_HOST, 'DB_PORT': DB_PORT, 'DB_NAME': DB_NAME, 'DB_USERNAME': DB_USERNAME,
+           'DB_PASSWORD': DB_PASSWORD, 'DB_CHARSET': DB_CHARSET}
+
 # 钉钉
 DINGTALK_WEBHOOK = cfg.get("DingTalk", "webhook")

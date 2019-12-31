@@ -6,11 +6,10 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
-from pykeyboard import PyKeyboard
 from common.commonaw import compare_image
 from utils.config import BASE_PATH
 from utils.vbi_logger import VBILogger
-from utils.vbi_exceptions import ImageLoadError, ImageNotExist
+from utils.vbi_exceptions import ImageLoadError, ImageNotExist, Failure
 
 
 class VBIImage(object):
@@ -22,7 +21,18 @@ class VBIImage(object):
         self.target_image = target_image
         self.image_name = None
         self.similaritylimit = 0.99
-        self.logger = VBILogger(module, log_file_name='test.log').get_logger()
+        self.logger = VBILogger(module).get_logger()
+        self.driver = driver
+        self.wait = WebDriverWait(self.driver, 5)
+        self.element_loadtime = 3
+
+    def initParam(self, driver):
+        """
+        初始化参数
+
+        :param driver: browser对象
+        :return:
+        """
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 5)
 
@@ -44,9 +54,9 @@ class VBIImage(object):
                 'headerItem').text and '该目录暂无画面' in self.driver.find_element_by_class_name('screenBody').text:
             raise ImageNotExist('{imageName}画面不存在'.format(imageName=self.image_name))
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'el-card__body'))).click()
-        time.sleep(1)
         target_image = self._get_target_image()
         self.driver.back()
+        # time.sleep(1)
         self.logger.info(self.image_name)
         return target_image
 
@@ -56,12 +66,12 @@ class VBIImage(object):
         :param driver:  webdriver obj
         :return: target image
         """
-        k = PyKeyboard()
-        k.tap_key(k.function_keys[11])
+        # TODO
+        # 如果不是最大化，切到当前窗口，进行最大化
         # 解决IE浏览器全屏出现滚动条页面显示不全问题
         self.driver.refresh()
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'inner')))
-        time.sleep(3)
+        time.sleep(self.element_loadtime)
         self.target_image = self.get_image(self.driver)
         # 按浏览器类型保存图片
         target_image = None
@@ -74,7 +84,6 @@ class VBIImage(object):
         elif self.driver.name == 'firefox':
             self.target_image.save(BASE_PATH + '/data/images/firefox_target_image.png', 'png')
             target_image = cv2.imread(BASE_PATH + '/data/images/firefox_target_image.png')
-        k.tap_key(k.function_keys[11])
         return target_image
 
     def get_template_image(self, template_image_name):
@@ -161,13 +170,22 @@ class VBIImage(object):
         else:
             self.logger.error('图片存在差异，相似度%s，备份图片' % similarity)
             self.backup_image()
-            raise Exception('图片存在差异，相似度%s' % similarity)
+            raise Failure('web端展示的画面与预期不一致')
 
     def backup_image(self):
         """
         备份失败图片
         :return:
         """
-        self.logger.info('备份失败图片')
-        self.target_image.save(
-            BASE_PATH + '/data/images/error_images/%s.png' % (self.image_name + '_' + self.driver.name), 'png')
+        self.logger.info('开始备份差异图片')
+        if self.driver.name == 'internet explorer':
+            self.target_image.save(
+                BASE_PATH + '/data/images/error_images/IE/%s.png' % (self.image_name + '_' + self.driver.name), 'png')
+        elif self.driver.name == 'chrome':
+            self.target_image.save(
+                BASE_PATH + '/data/images/error_images/CHROME/%s.png' % (self.image_name + '_' + self.driver.name),
+                'png')
+        elif self.driver.name == 'firefox':
+            self.target_image.save(
+                BASE_PATH + '/data/images/error_images/FIREFOX/%s.png' % (self.image_name + '_' + self.driver.name),
+                'png')

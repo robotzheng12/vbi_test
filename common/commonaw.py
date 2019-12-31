@@ -14,7 +14,6 @@ def compare_image(image1, image2, method='ahash'):
     method_dict = {'grayhist': 'classify_gray_hist', 'splithist': 'classify_hist_with_split',
                    'ahash': 'classify_aHash', 'phash': 'classify_pHash'}
     size = dismantle_image_arithmetic((len(image1[0]), len(image1)))
-    print(size)
     return eval(method_dict.get(method))(image1, image2, size)
 
 
@@ -171,11 +170,11 @@ def dismantle_image_arithmetic(imagesize):
     x, y = imagesize[0], imagesize[1]
     i = 1
     while True:
-        if x / i < 256 or y / i < 256:
+        if (x / i < 256 or y / i < 256):
             if x % i == 0 and y % i == 0:
                 return (int(x / i), int(y / i))
             else:
-                if int(x / i) < 128 or (y / i) < 128:
+                if x / i < 128 or y / i < 128:
                     if x > y:
                         return (320, 180)
                     else:
@@ -187,16 +186,7 @@ def dismantle_image_arithmetic(imagesize):
 
 
 if __name__ == '__main__':
-    img1 = cv2.imread(r'E:\workspace\python_project\vbitest\data\images\chrome_target_image.png')
-    num = dismantle_image_arithmetic((len(img1[0]), len(img1)))
-    img2 = cv2.resize(img1, dsize=num)
-    print(num)
-
-# if __name__ == '__main__t':
-#     #t = dismantle_image_arithmetic((1920, 1080))
-#     img1 = cv2.imread(r'E:\workspace\python_project\vbitest\data\images\chrome_target_image.png')
-#     img2 = cv2.resize(img1, (144, 256))
-#     img3 = cv2.resize(img2, (9, 16))
-#     # img2 = cv2.imread(r'E:/workspace/python_project/vbitest/data/images/TC_SCREEN_RESTORE_5.png')
-#     degree = compare_image(img1, img2, method='ahash')
-#     print(degree)
+    img1 = cv2.imread(r'C:/Users/86151/Desktop/share/1.png')
+    img2 = cv2.imread(r'C:/Users/86151/Desktop/share/2.png')
+    degree = compare_image(img1, img2, method='ahash')
+    print(degree)

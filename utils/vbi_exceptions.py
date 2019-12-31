@@ -47,3 +47,12 @@ class ImageLoadTimeout(Exception):
     图像加载超时
     """
     pass
+
+
+class Failure(Exception):
+    """
+    用例执行失败
+    """
+
+    def __init__(self, message):
+        self.message = message
